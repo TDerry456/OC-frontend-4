@@ -124,13 +124,13 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
   return (
     <section
       ref={sectionRef}
-      className={cn("relative bg-[#030B2F]", className)}
+      className={cn("relative", className)}
       style={{
         height: `calc(620px + ${(cards.length - 1) * 52}vh)`,
       }}
     >
-      <div className="sticky top-20 h-[480px] overflow-hidden md:top-24 md:h-[540px]">
-        <div className="relative mx-auto h-full w-full pt-6 md:pt-8">
+      <div className="sticky top-20 h-[480px] overflow-hidden bg-[#030B2F] md:top-24 md:h-[540px]">
+        <div className="relative mx-auto h-full w-full pt-4 md:pt-6">
           {cards.map((card, index) => (
             <CardLayer
               key={`${card.title}-${index}`}
