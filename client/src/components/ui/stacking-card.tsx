@@ -55,6 +55,7 @@ export function StackingCard({
     <div
       ref={container}
       className="sticky top-0 flex h-screen items-center justify-center"
+      style={{ zIndex: cardsZIndex(i) }}
     >
       <motion.div
         style={{
@@ -101,6 +102,10 @@ export function StackingCard({
   );
 }
 
+function cardsZIndex(index: number) {
+  return 100 + index;
+}
+
 interface StackingCardsProps {
   cards: StackingCardData[];
   className?: string;
@@ -114,7 +119,10 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
   });
 
   return (
-    <div ref={container} className={cn("relative", className)}>
+    <div
+      ref={container}
+      className={cn("relative bg-[#0D174A] pb-[20vh]", className)}
+    >
       {cards.map((card, i) => {
         const targetScale = 1 - (cards.length - i) * 0.05;
         return (
@@ -137,3 +145,4 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
     </div>
   );
 }
+
