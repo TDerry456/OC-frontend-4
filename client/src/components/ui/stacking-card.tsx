@@ -15,57 +15,41 @@ export interface StackingCardData {
   ctaLabel?: string;
 }
 
-interface StackingCardsProps {
-  cards: StackingCardData[];
-  className?: string;
-}
-
-interface CardLayerProps {
+interface CardProps {
   index: number;
   total: number;
   card: StackingCardData;
   progress: MotionValue<number>;
 }
 
-function CardLayer({ index, total, card, progress }: CardLayerProps) {
-  const segment = 1 / (total + 0.35);
-  const start = index * segment;
-  const end = start + segment * 0.9;
+interface StackingCardsProps {
+  cards: StackingCardData[];
+  className?: string;
+}
 
-  const stackOffset = index * 18;
-  const stackScale = 1 - (total - index - 1) * 0.035;
+function StackingCardItem({ index, total, card, progress }: CardProps) {
+  const start = index / total;
+  const end = 1;
 
-  const y = useTransform(
-    progress,
-    [0, start, end, 1],
-    [140, 140, stackOffset, stackOffset]
-  );
-
-  const scale = useTransform(
-    progress,
-    [0, start, end, 1],
-    [0.96, 0.96, stackScale, stackScale]
-  );
-
-  const opacity = useTransform(
-    progress,
-    [0, Math.max(0, start - 0.04), end, 1],
-    [index === 0 ? 1 : 0, index === 0 ? 1 : 0, 1, 1]
-  );
+  const scale = useTransform(progress, [start, end], [1, 1 - (total - index - 1) * 0.04]);
+  const imageScale = useTransform(progress, [start, Math.min(start + 0.2, 1)], [1.15, 1]);
 
   return (
-    <motion.div
-      className="pointer-events-none absolute inset-0 flex items-center justify-center px-4 md:px-8"
+    <div
+      className="sticky flex items-center justify-center px-4 md:px-8"
       style={{
-        y,
-        scale,
-        opacity,
+        top: "5rem",
+        height: "calc(100vh - 5rem)",
         zIndex: index + 1,
       }}
     >
-      <div
-        className="pointer-events-auto relative flex h-[420px] w-full max-w-5xl flex-col overflow-hidden rounded-[28px] p-6 shadow-2xl md:h-[460px] md:p-10"
-        style={{ backgroundColor: card.color }}
+      <motion.div
+        style={{
+          backgroundColor: card.color,
+          scale,
+          top: `calc(-2vh + ${index * 18}px)`,
+        }}
+        className="relative flex h-[420px] w-full max-w-5xl origin-top flex-col overflow-hidden rounded-[28px] p-6 shadow-2xl md:h-[460px] md:p-10"
       >
         <span className="mb-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
           {card.step}
@@ -93,50 +77,50 @@ function CardLayer({ index, total, card, progress }: CardLayerProps) {
           </div>
 
           <div className="relative min-h-[220px] flex-1 overflow-hidden rounded-2xl md:min-h-0 md:w-[60%]">
-            <img
+            <motion.img
               src={card.image}
               alt={card.title}
               className="absolute inset-0 h-full w-full object-cover"
+              style={{ scale: imageScale }}
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/10" />
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 
 export function StackingCards({ cards, className }: StackingCardsProps) {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: containerRef,
     offset: ["start start", "end end"],
   });
 
   return (
     <section
-      ref={sectionRef}
-      className={cn("relative bg-[#030B2F]", className)}
+      ref={containerRef}
+      className={cn("relative bg-[#030B2F] py-8 md:py-10", className)}
       style={{
-        height: `${Math.max(cards.length * 85, 220)}vh`,
+        height: `${cards.length * 85}vh`,
       }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="relative h-full w-full">
-          {cards.map((card, index) => (
-            <CardLayer
-              key={`${card.title}-${index}`}
-              index={index}
-              total={cards.length}
-              card={card}
-              progress={scrollYProgress}
-            />
-          ))}
-        </div>
+      <div className="relative h-full">
+        {cards.map((card, index) => (
+          <StackingCardItem
+            key={`${card.title}-${index}`}
+            index={index}
+            total={cards.length}
+            card={card}
+            progress={scrollYProgress}
+          />
+        ))}
       </div>
     </section>
   );
 }
 
 export default StackingCards;
+
