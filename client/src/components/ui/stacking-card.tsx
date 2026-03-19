@@ -33,31 +33,28 @@ interface CardLayerProps {
 }
 
 function CardLayer({ card, index, total, progress }: CardLayerProps) {
-  const segment = 1 / total;
+  const transitions = Math.max(total - 1, 1);
 
-  const start = index * segment;
-  const enterStart = Math.max(0, start - segment * 0.12);
-  const enterEnd = start + segment * 0.5;
+  const start =
+    index === 0 ? 0 : Math.max(0, (index - 1) / transitions - 0.04);
+  const end =
+    index === 0 ? 0.18 : Math.min(1, index / transitions + 0.12);
 
-  const finalY = index * 18;
+  const finalY = index * 16;
   const finalScale = 1 - (total - index - 1) * 0.035;
 
-  const y = useTransform(
-    progress,
-    [0, enterStart, enterEnd, 1],
-    [80, 80, finalY, finalY]
-  );
+  const y = useTransform(progress, [0, start, end, 1], [72, 72, finalY, finalY]);
 
   const scale = useTransform(
     progress,
-    [0, enterStart, enterEnd, 1],
+    [0, start, end, 1],
     [0.985, 0.985, finalScale, finalScale]
   );
 
   const opacity = useTransform(
     progress,
-    [0, enterStart * 0.9, enterStart, enterEnd],
-    [index === 0 ? 1 : 0, index === 0 ? 1 : 0, index === 0 ? 1 : 0.92, 1]
+    [0, start * 0.9, start, end],
+    [index === 0 ? 1 : 0, index === 0 ? 1 : 0, index === 0 ? 1 : 0.9, 1]
   );
 
   return (
@@ -71,7 +68,7 @@ function CardLayer({ card, index, total, progress }: CardLayerProps) {
       }}
     >
       <div
-        className="relative flex h-[400px] w-full max-w-5xl flex-col overflow-hidden rounded-[28px] p-6 shadow-2xl md:h-[440px] md:p-10"
+        className="relative flex h-[390px] w-full max-w-5xl flex-col overflow-hidden rounded-[28px] p-6 shadow-2xl md:h-[430px] md:p-10"
         style={{ backgroundColor: card.color }}
       >
         <span className="mb-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
@@ -126,10 +123,10 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
       ref={sectionRef}
       className={cn("relative", className)}
       style={{
-        height: `calc(620px + ${(cards.length - 1) * 52}vh)`,
+        height: `calc(520px + ${(cards.length - 1) * 42}vh)`,
       }}
     >
-      <div className="sticky top-20 h-[480px] overflow-hidden bg-[#030B2F] md:top-24 md:h-[540px]">
+      <div className="sticky top-20 h-[470px] overflow-hidden bg-[#030B2F] md:top-24 md:h-[510px]">
         <div className="relative mx-auto h-full w-full pt-4 md:pt-6">
           {cards.map((card, index) => (
             <CardLayer
