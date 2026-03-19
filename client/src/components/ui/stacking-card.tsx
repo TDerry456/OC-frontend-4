@@ -36,33 +36,33 @@ function CardLayer({ card, index, total, progress }: CardLayerProps) {
   const segment = 1 / total;
 
   const start = index * segment;
-  const enterStart = Math.max(0, start - segment * 0.18);
-  const enterEnd = start + segment * 0.38;
+  const enterStart = Math.max(0, start - segment * 0.12);
+  const enterEnd = start + segment * 0.5;
 
-  const finalY = index * 16;
+  const finalY = index * 18;
   const finalScale = 1 - (total - index - 1) * 0.035;
 
   const y = useTransform(
     progress,
     [0, enterStart, enterEnd, 1],
-    [90, 90, finalY, finalY]
+    [80, 80, finalY, finalY]
   );
 
   const scale = useTransform(
     progress,
     [0, enterStart, enterEnd, 1],
-    [0.98, 0.98, finalScale, finalScale]
+    [0.985, 0.985, finalScale, finalScale]
   );
 
   const opacity = useTransform(
     progress,
-    [0, enterStart * 0.8, enterStart, enterEnd],
-    [index === 0 ? 1 : 0, index === 0 ? 1 : 0, index === 0 ? 1 : 0.88, 1]
+    [0, enterStart * 0.9, enterStart, enterEnd],
+    [index === 0 ? 1 : 0, index === 0 ? 1 : 0, index === 0 ? 1 : 0.92, 1]
   );
 
   return (
     <motion.div
-      className="absolute inset-0 flex items-center justify-center px-4 md:px-8"
+      className="absolute inset-0 flex items-start justify-center px-4 md:px-8"
       style={{
         y,
         scale,
@@ -126,11 +126,11 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
       ref={sectionRef}
       className={cn("relative bg-[#030B2F]", className)}
       style={{
-        height: `${cards.length * 30}vh`,
+        height: `calc(620px + ${(cards.length - 1) * 52}vh)`,
       }}
     >
-      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        <div className="relative h-[440px] w-full">
+      <div className="sticky top-20 h-[540px] overflow-hidden md:top-24 md:h-[580px]">
+        <div className="relative mx-auto h-full w-full pt-6 md:pt-8">
           {cards.map((card, index) => (
             <CardLayer
               key={`${card.title}-${index}`}
