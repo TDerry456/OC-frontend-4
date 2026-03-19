@@ -126,7 +126,7 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
       ref={sectionRef}
       className={cn("relative bg-[#030B2F]", className)}
       style={{
-        height: `${cards.length * 72}vh`,
+        height: `${cards.length * 50}vh`,
       }}
     >
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
