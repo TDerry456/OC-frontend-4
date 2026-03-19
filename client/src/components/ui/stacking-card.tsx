@@ -129,7 +129,7 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
         height: `calc(620px + ${(cards.length - 1) * 52}vh)`,
       }}
     >
-      <div className="sticky top-20 h-[540px] overflow-hidden md:top-24 md:h-[580px]">
+      <div className="sticky top-20 h-[480px] overflow-hidden md:top-24 md:h-[540px]">
         <div className="relative mx-auto h-full w-full pt-6 md:pt-8">
           {cards.map((card, index) => (
             <CardLayer
