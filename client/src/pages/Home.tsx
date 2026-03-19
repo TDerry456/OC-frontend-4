@@ -261,7 +261,7 @@ function FadeIn({
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function Home() {
-  useLenis();
+  // useLenis();
 
   // Simulated stats (would come from /api/public/stats)
   const stats = { expertsCount: 1200, companiesCount: 340 };
