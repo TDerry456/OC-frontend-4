@@ -36,34 +36,28 @@ function CardLayer({ card, index, total, progress }: CardLayerProps) {
   const segment = 1 / total;
 
   const start = index * segment;
-  const revealStart = Math.max(0, start - segment * 0.35);
-  const revealEnd = start + segment * 0.55;
+  const enterStart = Math.max(0, start - segment * 0.18);
+  const enterEnd = start + segment * 0.38;
 
-  const finalYOffset = -index * 18;
-  const finalScale = 1 - index * 0.02;
+  const finalY = index * 16;
+  const finalScale = 1 - (total - index - 1) * 0.035;
 
   const y = useTransform(
     progress,
-    [0, revealStart, revealEnd, 1],
-    [120, 120, finalYOffset, finalYOffset]
+    [0, enterStart, enterEnd, 1],
+    [90, 90, finalY, finalY]
   );
 
   const scale = useTransform(
     progress,
-    [0, revealStart, revealEnd, 1],
-    [1, 1, finalScale, finalScale]
+    [0, enterStart, enterEnd, 1],
+    [0.98, 0.98, finalScale, finalScale]
   );
 
   const opacity = useTransform(
     progress,
-    [0, revealStart * 0.98, revealStart, revealEnd],
-    [index === 0 ? 1 : 0, index === 0 ? 1 : 0, index === 0 ? 1 : 0.9, 1]
-  );
-
-  const imageScale = useTransform(
-    progress,
-    [revealStart, revealEnd],
-    [1.12, 1]
+    [0, enterStart * 0.8, enterStart, enterEnd],
+    [index === 0 ? 1 : 0, index === 0 ? 1 : 0, index === 0 ? 1 : 0.88, 1]
   );
 
   return (
@@ -74,11 +68,10 @@ function CardLayer({ card, index, total, progress }: CardLayerProps) {
         scale,
         opacity,
         zIndex: index + 1,
-        pointerEvents: index === total - 1 ? "auto" : "none",
       }}
     >
       <div
-        className="relative flex h-[420px] w-full max-w-5xl flex-col overflow-hidden rounded-[28px] p-6 shadow-2xl md:h-[460px] md:p-10"
+        className="relative flex h-[400px] w-full max-w-5xl flex-col overflow-hidden rounded-[28px] p-6 shadow-2xl md:h-[440px] md:p-10"
         style={{ backgroundColor: card.color }}
       >
         <span className="mb-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
@@ -107,11 +100,10 @@ function CardLayer({ card, index, total, progress }: CardLayerProps) {
           </div>
 
           <div className="relative min-h-[220px] flex-1 overflow-hidden rounded-2xl md:min-h-0 md:w-[60%]">
-            <motion.img
+            <img
               src={card.image}
               alt={card.title}
               className="absolute inset-0 h-full w-full object-cover"
-              style={{ scale: imageScale }}
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/10" />
           </div>
@@ -134,11 +126,11 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
       ref={sectionRef}
       className={cn("relative bg-[#030B2F]", className)}
       style={{
-        height: `${cards.length * 100}vh`,
+        height: `${cards.length * 72}vh`,
       }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="relative h-full w-full">
+      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <div className="relative h-[440px] w-full">
           {cards.map((card, index) => (
             <CardLayer
               key={`${card.title}-${index}`}
