@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useRef } from 'react';
-import { useTransform, motion, useScroll, MotionValue } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { ArrowUpRight } from "lucide-react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export interface StackingCardData {
   title: string;
@@ -10,6 +11,8 @@ export interface StackingCardData {
   image: string;
   color: string;
   step: string;
+  ctaHref?: string;
+  ctaLabel?: string;
 }
 
 interface CardProps {
@@ -19,6 +22,8 @@ interface CardProps {
   image: string;
   step: string;
   color: string;
+  ctaHref?: string;
+  ctaLabel?: string;
   progress: MotionValue<number>;
   range: [number, number];
   targetScale: number;
@@ -31,23 +36,25 @@ export function StackingCard({
   image,
   step,
   color,
+  ctaHref = "#",
+  ctaLabel = "See more",
   progress,
   range,
   targetScale,
 }: CardProps) {
-  const container = useRef(null);
+  const container = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ['start end', 'start start'],
+    offset: ["start end", "start start"],
   });
 
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1.15, 1]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [2, 1]);
   const scale = useTransform(progress, range, [1, targetScale]);
 
   return (
     <div
       ref={container}
-      className="h-screen flex items-center justify-center sticky top-0"
+      className="sticky top-0 flex h-screen items-center justify-center"
     >
       <motion.div
         style={{
@@ -55,33 +62,38 @@ export function StackingCard({
           scale,
           top: `calc(-5vh + ${i * 25}px)`,
         }}
-        className="flex flex-col relative h-[480px] w-[85%] max-w-5xl rounded-2xl p-8 md:p-10 origin-top shadow-xl"
+        className="relative -top-[20%] flex h-[450px] w-[70%] max-w-5xl origin-top flex-col rounded-2xl p-8 shadow-2xl md:p-10"
       >
-        {/* Step label */}
-        <span className="text-xs font-bold uppercase tracking-widest text-white/50 mb-1">
+        <span className="mb-2 text-xs font-bold uppercase tracking-[0.24em] text-white/55">
           {step}
         </span>
-        <h2 className="text-xl md:text-2xl font-bold text-white">{title}</h2>
+        <h2 className="text-2xl font-semibold text-white">{title}</h2>
 
-        <div className="flex flex-col md:flex-row h-full mt-6 gap-8">
-          {/* Left: description */}
-          <div className="md:w-[38%] flex flex-col justify-start pt-2">
-            <p className="text-white/80 text-sm md:text-base leading-relaxed">
+        <div className="mt-5 flex h-full flex-col gap-8 md:flex-row md:gap-10">
+          <div className="relative md:top-[10%] md:w-[40%]">
+            <p className="text-sm leading-relaxed text-white/82">
               {description}
             </p>
+            <span className="flex items-center gap-2 pt-4 text-white">
+              <a
+                href={ctaHref}
+                className="underline underline-offset-4"
+              >
+                {ctaLabel}
+              </a>
+              <ArrowUpRight className="h-4 w-4" />
+            </span>
           </div>
 
-          {/* Right: image */}
-          <div className="md:w-[62%] relative rounded-xl overflow-hidden flex-1 md:flex-none md:h-full">
-            <motion.div className="w-full h-full" style={{ scale: imageScale }}>
+          <div className="relative h-full flex-1 overflow-hidden rounded-xl md:w-[60%]">
+            <motion.div className="h-full w-full" style={{ scale: imageScale }}>
               <img
                 src={image}
                 alt={title}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
             </motion.div>
-            {/* subtle gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-white/10" />
           </div>
         </div>
       </motion.div>
@@ -95,16 +107,16 @@ interface StackingCardsProps {
 }
 
 export function StackingCards({ cards, className }: StackingCardsProps) {
-  const container = useRef(null);
+  const container = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ['start start', 'end end'],
+    offset: ["start start", "end end"],
   });
 
   return (
-    <div ref={container} className={cn('relative', className)}>
+    <div ref={container} className={cn("relative", className)}>
       {cards.map((card, i) => {
-        const targetScale = 1 - (cards.length - i) * 0.04;
+        const targetScale = 1 - (cards.length - i) * 0.05;
         return (
           <StackingCard
             key={i}
@@ -114,8 +126,10 @@ export function StackingCards({ cards, className }: StackingCardsProps) {
             image={card.image}
             step={card.step}
             color={card.color}
+            ctaHref={card.ctaHref}
+            ctaLabel={card.ctaLabel}
             progress={scrollYProgress}
-            range={[i / cards.length, 1]}
+            range={[i * 0.25, 1]}
             targetScale={targetScale}
           />
         );
