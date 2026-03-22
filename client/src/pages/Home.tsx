@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StackingCards, type StackingCardData } from "@/components/ui/stacking-card";
 import { ZoomParallax } from "@/components/ui/zoom-parallax";
@@ -121,17 +121,19 @@ function FAQItem({ q, a }: { q: string; a: string }) {
           <ChevronDown size={18} className="text-gray-400 flex-shrink-0" />
         )}
       </button>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.2 }}
-          className="pb-5"
-        >
-          <p className="text-gray-600 text-sm leading-relaxed">{a}</p>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="pb-5"
+          >
+            <p className="text-gray-600 text-sm leading-relaxed">{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

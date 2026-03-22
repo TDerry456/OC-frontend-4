@@ -40,7 +40,7 @@ function CardLayer({ card, index, total, progress }: CardLayerProps) {
   );
   const opacity = useTransform(
     progress,
-    [0, Math.max(0, start - 0.08), start, end],
+    [start - 0.08, start, end, 1],
     [index === 0 ? 1 : 0, index === 0 ? 1 : 0, 1, 1]
   );
 
